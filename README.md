@@ -61,6 +61,12 @@ Tailscale creates a private network between your devices, so you can pull up the
 
 Requirements on the go: phone's Tailscale toggle on, and your computer at home powered on.
 
+**"Address not found" on your phone?** In order:
+1. Make sure the phone's Tailscale app is signed into the SAME account as the computer. A different account means your computer is invisible.
+2. Check the app's VPN toggle is ON (it should say Connected).
+3. Look at the app's device list: your computer's name should be there. If it is, reload the URL.
+4. Still nothing? Toggle the VPN off and back on, which forces DNS to refresh.
+
 ## If an account stops scraping
 
 The dashboard's "last scan" note will say `logged_out`. Just run the login setup again and log back into that account.
