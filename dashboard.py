@@ -8,7 +8,6 @@ from pathlib import Path
 
 BASE = Path(__file__).parent
 PORT = 8377
-CREATE_NO_WINDOW = 0x08000000
 
 
 def server_running():
@@ -19,10 +18,12 @@ def server_running():
 
 def open_dashboard():
     if not server_running():
-        subprocess.Popen(
-            [sys.executable, str(BASE / "server.py")],
-            creationflags=CREATE_NO_WINDOW,
-        )
+        kwargs = {}
+        if sys.platform == "win32":
+            kwargs["creationflags"] = 0x08000000  # CREATE_NO_WINDOW
+        else:
+            kwargs["start_new_session"] = True
+        subprocess.Popen([sys.executable, str(BASE / "server.py")], **kwargs)
         for _ in range(20):
             if server_running():
                 break
