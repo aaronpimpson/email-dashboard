@@ -46,9 +46,9 @@ schtasks /create /tn "EmailTriageDaily" /tr "C:\path\to\email-triage\run_triage.
 - DONE and IGNORE are permanent (the daily scan never resurfaces a cleared thread); RESTORE undoes
 - Open it anytime with `dashboard.bat` / `./dashboard.sh`
 
-## Phone access (optional, free)
+## Your inbox command center, anywhere on earth (optional, free)
 
-Tailscale creates a private network between your devices, so your phone can reach the dashboard from anywhere while it stays invisible to everyone else.
+Tailscale creates a private network between your devices, so you can pull up the dashboard from your phone at a coffee shop, the airport, wherever, while it stays completely invisible to the rest of the internet. No hosting, no cloud, your own machine serving only you.
 
 1. Install Tailscale on your computer (`winget install Tailscale.Tailscale` on Windows, `brew install --cask tailscale` on Mac, or from [tailscale.com](https://tailscale.com)) and log in (free personal account).
 2. Install the Tailscale app on your phone, sign into the SAME account, and turn its VPN toggle on.
