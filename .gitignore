@@ -1,0 +1,8 @@
+# Personal data - never commit
+browser_profile/
+state.json
+inbox.json
+reports/
+what-i-built.txt
+
+__pycache__/
