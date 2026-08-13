@@ -37,13 +37,18 @@ schtasks /create /tn "EmailTriageDaily" /tr "C:\path\to\email-triage\run_triage.
 
 ## Phone access (optional, free)
 
-Install [Tailscale](https://tailscale.com) on your PC and phone, sign into both with the same account, then run:
+Tailscale creates a private network between your devices, so your phone can reach the dashboard from anywhere while it stays invisible to everyone else.
 
-```
-tailscale serve --bg 8377
-```
+1. Install Tailscale on your PC (`winget install Tailscale.Tailscale` or from [tailscale.com](https://tailscale.com)) and log in (free personal account).
+2. Install the Tailscale app on your phone, sign into the SAME account, and turn its VPN toggle on.
+3. On the PC, run:
+   ```
+   tailscale serve --bg 8377
+   ```
+   The first time, it prints a link to enable serving on your tailnet. Open it, click enable, then run the command again.
+4. It prints your private `https://...ts.net` URL. Bookmark that on your phone.
 
-It prints a private https URL that works from your phone anywhere. Only your devices can reach it.
+Requirements on the go: phone's Tailscale toggle on, and your PC at home powered on.
 
 ## If an account stops scraping
 
