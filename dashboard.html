@@ -105,7 +105,7 @@ function render() {
           (it.bucket === 'maybe' ? ' · maybe' : '')));
         const a = el('a', null, it.subject || '(no subject)');
         a.href = 'https://mail.google.com/mail/?authuser=' +
-          encodeURIComponent(it.account) + '#all/' + it.thread_id;
+          encodeURIComponent(it.account) + '#all/' + id;
         a.target = '_blank';
         body.appendChild(a);
         body.appendChild(el('div', 'reason', it.reason || ''));
