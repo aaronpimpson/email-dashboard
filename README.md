@@ -57,6 +57,16 @@ Your computer needs to be on (not asleep) at that time; otherwise just run it ma
 - DONE and IGNORE are permanent: once cleared, that thread never comes back, even if tomorrow's scan sees it again. RESTORE undoes.
 - Open it anytime: `dashboard.bat` (Windows) / `./dashboard.sh` (Mac)
 
+## Your rules, in plain English (optional)
+
+Teach the triage your personal law: copy `rules.example.txt` to `rules.txt` and write rules as normal sentences. The AI applies them on every scan and they override its default judgment. Examples:
+
+- "Any email from Adobe Sign or DocuSign: always flag, mark URGENT" (never miss a contract again)
+- "Never flag verification codes"
+- Account-specific: "the contract rule does NOT apply to my personal account (me@gmail.com)"
+
+No `rules.txt`? Everything works with the default judgment. Your rules stay on your machine (the file is gitignored).
+
 ## Your inbox command center, anywhere on earth (optional, free)
 
 Tailscale creates a private network between your devices, so you can pull up the dashboard from your phone at a coffee shop, the airport, wherever, while it stays completely invisible to the rest of the internet. No hosting, no cloud, your own machine serving only you.

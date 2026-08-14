@@ -4,5 +4,6 @@ state.json
 inbox.json
 reports/
 what-i-built.txt
+rules.txt
 
 __pycache__/

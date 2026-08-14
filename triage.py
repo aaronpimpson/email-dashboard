@@ -20,6 +20,7 @@ Rules:
 - Weigh unread higher, but a read email can still need a reply.
 - maybe: genuinely borderline only, max 3 per account.
 - If an account's status is "logged_out", "duplicate", or an error, put that in its "note".
+{user_rules}
 
 Output ONLY valid JSON, no markdown fences, no commentary, exactly this shape:
 {
@@ -57,11 +58,19 @@ def main():
 
     inbox = (BASE / "inbox.json").read_text(encoding="utf-8")
 
+    rules_file = BASE / "rules.txt"
+    user_rules = ""
+    if rules_file.exists() and rules_file.read_text(encoding="utf-8").strip():
+        user_rules = (
+            "\nUSER RULES (these override every default rule above):\n"
+            + rules_file.read_text(encoding="utf-8").strip() + "\n"
+        )
+
     print("Triaging with Claude...")
     result = subprocess.run(
         "claude -p",
         shell=True,
-        input=PROMPT + inbox,
+        input=PROMPT.replace("{user_rules}", user_rules) + inbox,
         capture_output=True,
         text=True,
         encoding="utf-8",

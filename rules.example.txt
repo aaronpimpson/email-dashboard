@@ -1,0 +1,13 @@
+Write triage rules for your emails here in plain English, then save this file as rules.txt.
+The AI applies them on every scan, and they override its default judgment. Examples:
+
+ALWAYS flag as needs reply:
+- Any email from DocuSign or Adobe Sign: signature requests, reminders, and final signed copies. Start the reason with "URGENT:".
+- Anything from my accountant (jane@example.com), even if it looks automated.
+
+NEVER flag:
+- Verification codes and login alerts.
+- The Monday sales newsletter, even though a human sends it.
+
+Rules can be account-specific:
+- The DocuSign rule does NOT apply to my personal account (me@gmail.com); treat those as normal automated mail.
