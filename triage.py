@@ -19,6 +19,9 @@ Rules:
 - Ignore newsletters, receipts, notifications, promos, automated mail, and FYI-only threads.
 - Weigh unread higher, but a read email can still need a reply.
 - maybe: genuinely borderline only, max 3 per account.
+- Evaluate EVERY thread independently. Never merge or skip a thread because it looks similar
+  to another one; two threads with near-identical subjects are two separate items, each with
+  its own thread_id copied exactly.
 - If an account's status is "logged_out", "duplicate", or an error, put that in its "note".
 {user_rules}
 
