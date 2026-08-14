@@ -11,7 +11,7 @@ BASE = Path(__file__).parent
 PROFILE_DIR = BASE / "browser_profile"
 OUTPUT = BASE / "inbox.json"
 
-NUM_ACCOUNTS = 4
+NUM_ACCOUNTS = 5
 MAX_THREADS = 40
 HEADLESS = "--headed" not in sys.argv
 

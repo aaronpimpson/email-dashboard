@@ -55,6 +55,7 @@ Your computer needs to be on (not asleep) at that time; otherwise just run it ma
 - Tabs: PENDING / DONE / IGNORED, grouped by account
 - Every item shows who, what they want, and links straight to the email in the right account
 - DONE and IGNORE are permanent: once cleared, that thread never comes back, even if tomorrow's scan sees it again. RESTORE undoes.
+- Cleared items quietly fall off the Done/Ignored tabs after 7 days, so they never pile up.
 - Open it anytime: `dashboard.bat` (Windows) / `./dashboard.sh` (Mac)
 
 ## Your rules, in plain English (optional)

@@ -3,7 +3,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from dashboard import open_dashboard
@@ -86,6 +86,19 @@ def main():
 
     state = load_state()
     items = state["items"]
+
+    cutoff = datetime.now() - timedelta(days=7)
+    purged = 0
+    for tid in list(items):
+        it = items[tid]
+        if it["status"] in ("done", "ignored"):
+            resolved = it.get("resolved_at")
+            if not resolved:
+                it["resolved_at"] = datetime.now().isoformat(timespec="seconds")
+            elif datetime.fromisoformat(resolved) < cutoff:
+                del items[tid]
+                purged += 1
+
     new = 0
     notes = []
     for acc in data.get("accounts", []):
@@ -113,7 +126,7 @@ def main():
         state["last_run"] += " (" + "; ".join(notes) + ")"
     STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
     pending = sum(1 for i in items.values() if i["status"] == "pending")
-    print(f"{new} new item(s), {pending} pending total.")
+    print(f"{new} new item(s), {pending} pending total, {purged} aged off.")
 
     open_dashboard()
 

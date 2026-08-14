@@ -1,5 +1,6 @@
 """Local dashboard server for the email triage state."""
 import json
+from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -41,6 +42,10 @@ class Handler(BaseHTTPRequestHandler):
         item = state["items"].get(req.get("thread_id"))
         if item and req.get("status") in ("pending", "done", "ignored"):
             item["status"] = req["status"]
+            if req["status"] in ("done", "ignored"):
+                item["resolved_at"] = datetime.now().isoformat(timespec="seconds")
+            else:
+                item.pop("resolved_at", None)
             STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
             self._send(200, '{"ok": true}')
         else:
