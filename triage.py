@@ -84,6 +84,17 @@ def main():
     raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw)
     data = json.loads(raw)
 
+    # real email timestamps by thread id, from Gmail's date tooltip
+    email_ts = {}
+    for acc in json.loads(inbox)["accounts"]:
+        for t in acc["threads"]:
+            raw_date = (t.get("date") or "").replace(" ", " ").replace(" ", " ")
+            try:
+                email_ts[t["thread_id"]] = datetime.strptime(
+                    raw_date, "%a, %b %d, %Y, %I:%M %p").isoformat(timespec="seconds")
+            except ValueError:
+                pass
+
     state = load_state()
     items = state["items"]
 
@@ -118,6 +129,7 @@ def main():
                     "bucket": bucket,
                     "status": "pending",
                     "added": datetime.now().isoformat(timespec="seconds"),
+                    "sort_ts": email_ts.get(tid),
                 }
                 new += 1
 

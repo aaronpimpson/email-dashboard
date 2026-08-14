@@ -96,7 +96,8 @@ function render() {
   Object.keys(byAccount).sort().forEach(account => {
     content.appendChild(el('h2', null, account));
     byAccount[account]
-      .sort((a, b) => (a[1].added || '').localeCompare(b[1].added || ''))
+      .sort((a, b) => (b[1].sort_ts || b[1].added || '')
+        .localeCompare(a[1].sort_ts || a[1].added || ''))
       .forEach(([id, it]) => {
         const card = el('div', 'item ' + (it.bucket || ''));
         const body = el('div', 'body');

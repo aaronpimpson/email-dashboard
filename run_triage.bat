@@ -1,4 +1,3 @@
 @echo off
 cd /d "%~dp0"
-python triage.py
-if errorlevel 1 pause
+python triage.py >> triage.log 2>&1
