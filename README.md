@@ -22,7 +22,7 @@ Works on Windows and Mac. Windows users run the `.bat` files; Mac users run the 
 2. Open a terminal and install the one dependency:
    - Windows: `pip install playwright`
    - Mac: `pip3 install playwright`
-3. Open `scrape.py` in any text editor and set `NUM_ACCOUNTS` at the top to how many Gmail accounts you have (default 4).
+3. Open `scrape.py` in any text editor and set `NUM_ACCOUNTS` at the top to how many Gmail accounts you have (default 5).
 4. Log your Gmail accounts in (one time only):
    - Windows: double-click `setup_login.bat`
    - Mac: in a terminal in the folder, run `chmod +x *.sh` once, then `./setup_login.sh`
