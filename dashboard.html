@@ -39,7 +39,8 @@
 let state = { items: {} };
 let tab = 'pending';
 
-const TABS = ['pending', 'done', 'ignored'];
+const TABS = ['pending', 'receipt', 'done', 'ignored'];
+const TAB_LABELS = { pending: 'PENDING', receipt: 'RECEIPTS', done: 'DONE', ignored: 'IGNORED' };
 
 async function load() {
   state = await (await fetch('/api/state')).json();
@@ -64,14 +65,14 @@ function el(tag, cls, text) {
 
 function render() {
   const items = Object.entries(state.items || {});
-  const counts = { pending: 0, done: 0, ignored: 0 };
-  items.forEach(([, it]) => counts[it.status]++);
+  const counts = { pending: 0, receipt: 0, done: 0, ignored: 0 };
+  items.forEach(([, it]) => { if (counts[it.status] != null) counts[it.status]++; });
 
   const tabs = document.getElementById('tabs');
   tabs.innerHTML = '';
   TABS.forEach(t => {
     const b = el('button', 'tab' + (t === tab ? ' active' : ''),
-      t.toUpperCase() + ' (' + counts[t] + ')');
+      TAB_LABELS[t] + ' (' + counts[t] + ')');
     b.onclick = () => { tab = t; render(); };
     tabs.appendChild(b);
   });
@@ -120,7 +121,7 @@ function render() {
           g.onclick = () => setStatus(id, 'ignored');
           btns.appendChild(d);
           btns.appendChild(g);
-        } else {
+        } else if (tab !== 'receipt') {
           const r = el('button', null, 'RESTORE');
           r.onclick = () => setStatus(id, 'pending');
           btns.appendChild(r);

@@ -25,6 +25,11 @@ Rules:
 - If an account's status is "logged_out", "duplicate", or an error, put that in its "note".
 {user_rules}
 
+Each account also has "receipt_candidates": threads from the last 7 days matching
+receipt-ish keywords. From those, identify ACTUAL receipts: purchase confirmations,
+invoices, payment/renewal/subscription charges. Not marketing that mentions "order now",
+not shipping-only updates.
+
 Output ONLY valid JSON, no markdown fences, no commentary, exactly this shape:
 {
   "accounts": [
@@ -35,7 +40,11 @@ Output ONLY valid JSON, no markdown fences, no commentary, exactly this shape:
         {"thread_id": "copied from input", "date": "Aug 13", "sender": "Name",
          "subject": "Subject", "reason": "one line on what they want and why it needs him"}
       ],
-      "maybe": [ same shape ]
+      "maybe": [ same shape ],
+      "receipts": [
+        {"thread_id": "copied from input", "date": "Aug 13", "sender": "Vendor",
+         "subject": "Subject", "reason": "what was charged, with the amount if visible"}
+      ]
     }
   ]
 }
@@ -90,7 +99,7 @@ def main():
     # real email timestamps by thread id, from Gmail's date tooltip
     email_ts = {}
     for acc in json.loads(inbox)["accounts"]:
-        for t in acc["threads"]:
+        for t in (acc.get("threads") or []) + (acc.get("receipt_candidates") or []):
             raw_date = (t.get("date") or "").replace(" ", " ").replace(" ", " ")
             try:
                 email_ts[t["thread_id"]] = datetime.strptime(
@@ -102,6 +111,7 @@ def main():
     items = state["items"]
 
     cutoff = datetime.now() - timedelta(days=7)
+    receipt_cutoff = datetime.now() - timedelta(days=30)
     purged = 0
     for tid in list(items):
         it = items[tid]
@@ -112,13 +122,16 @@ def main():
             elif datetime.fromisoformat(resolved) < cutoff:
                 del items[tid]
                 purged += 1
+        elif it["status"] == "receipt" and datetime.fromisoformat(it["added"]) < receipt_cutoff:
+            del items[tid]
+            purged += 1
 
     new = 0
     notes = []
     for acc in data.get("accounts", []):
         if acc.get("note"):
             notes.append(f"{acc.get('email') or '?'}: {acc['note']}")
-        for bucket in ("needs_reply", "maybe"):
+        for bucket in ("needs_reply", "maybe", "receipts"):
             for it in acc.get(bucket) or []:
                 tid = it.get("thread_id")
                 if not tid or tid in items:
@@ -130,7 +143,7 @@ def main():
                     "subject": it.get("subject") or "",
                     "reason": it.get("reason") or "",
                     "bucket": bucket,
-                    "status": "pending",
+                    "status": "receipt" if bucket == "receipts" else "pending",
                     "added": datetime.now().isoformat(timespec="seconds"),
                     "sort_ts": email_ts.get(tid),
                 }

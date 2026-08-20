@@ -16,6 +16,28 @@ MAX_THREADS = 40
 HEADLESS = "--headed" not in sys.argv
 
 
+def read_rows(page):
+    threads = []
+    for row in page.query_selector_all("tr.zA")[:MAX_THREADS]:
+        cls = row.get_attribute("class") or ""
+        sender_el = row.query_selector(".yW span[email]") or row.query_selector(".yW span")
+        subject_el = row.query_selector(".bog")
+        snippet_el = row.query_selector(".y2")
+        date_el = row.query_selector("td.xW span")
+        id_el = row.query_selector("[data-legacy-thread-id]")
+        threads.append({
+            "thread_id": (id_el.get_attribute("data-legacy-thread-id") if id_el else None),
+            "unread": "zE" in cls,
+            "sender": (sender_el.inner_text().strip() if sender_el else ""),
+            "sender_email": (sender_el.get_attribute("email") if sender_el else None),
+            "subject": (subject_el.inner_text().strip() if subject_el else ""),
+            "snippet": (snippet_el.inner_text().strip(" -–—") if snippet_el else ""),
+            "date": (date_el.get_attribute("title") if date_el and date_el.get_attribute("title")
+                     else (date_el.inner_text().strip() if date_el else "")),
+        })
+    return threads
+
+
 def scrape_account(context, index, seen_emails):
     page = context.new_page()
     account = {"index": index, "email": None, "status": "ok", "threads": []}
@@ -40,24 +62,17 @@ def scrape_account(context, index, seen_emails):
         if account["email"]:
             seen_emails.add(account["email"])
 
-        rows = page.query_selector_all("tr.zA")[:MAX_THREADS]
-        for row in rows:
-            cls = row.get_attribute("class") or ""
-            sender_el = row.query_selector(".yW span[email]") or row.query_selector(".yW span")
-            subject_el = row.query_selector(".bog")
-            snippet_el = row.query_selector(".y2")
-            date_el = row.query_selector("td.xW span")
-            id_el = row.query_selector("[data-legacy-thread-id]")
-            account["threads"].append({
-                "thread_id": (id_el.get_attribute("data-legacy-thread-id") if id_el else None),
-                "unread": "zE" in cls,
-                "sender": (sender_el.inner_text().strip() if sender_el else ""),
-                "sender_email": (sender_el.get_attribute("email") if sender_el else None),
-                "subject": (subject_el.inner_text().strip() if subject_el else ""),
-                "snippet": (snippet_el.inner_text().strip(" -–—") if snippet_el else ""),
-                "date": (date_el.get_attribute("title") if date_el and date_el.get_attribute("title")
-                         else (date_el.inner_text().strip() if date_el else "")),
-            })
+        account["threads"] = read_rows(page)
+
+        # second pass: receipt candidates from the last 7 days
+        page.goto(f"https://mail.google.com/mail/u/{index}/#search/"
+                  "newer_than:7d+(receipt+OR+invoice+OR+order+OR+payment+OR+renewal+OR+purchase)",
+                  timeout=60000)
+        try:
+            page.wait_for_selector("tr.zA", timeout=15000)
+        except Exception:
+            pass  # no receipt-ish mail this week is valid
+        account["receipt_candidates"] = read_rows(page)
     except Exception as e:
         account["status"] = f"error: {e.__class__.__name__}: {e}"
     finally:
