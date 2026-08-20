@@ -29,6 +29,9 @@ Each account also has "receipt_candidates": threads from the last 7 days matchin
 receipt-ish keywords. From those, identify ACTUAL receipts: purchase confirmations,
 invoices, payment/renewal/subscription charges. Not marketing that mentions "order now",
 not shipping-only updates.
+IMPORTANT: receipts, invoices, bills and payment notices go ONLY in "receipts" -
+NEVER in needs_reply or maybe, even when they ask for payment or look account-specific
+(utility bills, water/sewer invoices, etc. included).
 
 Output ONLY valid JSON, no markdown fences, no commentary, exactly this shape:
 {
