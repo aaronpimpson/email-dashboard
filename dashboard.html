@@ -132,7 +132,7 @@ function render() {
         star.style.color = it.starred ? '#ffd166' : '#9aa3b2';
         star.onclick = () => setStar(id, !it.starred);
         btns.appendChild(star);
-        if (it.status === 'pending') {
+        if (it.status === 'pending' || it.status === 'receipt') {
           const d = el('button', 'done', 'DONE');
           d.onclick = () => setStatus(id, 'done');
           btns.appendChild(d);
