@@ -41,12 +41,18 @@ class Handler(BaseHTTPRequestHandler):
         req = json.loads(self.rfile.read(length))
         state = load_state()
         item = state["items"].get(req.get("thread_id"))
+        changed = False
         if item and req.get("status") in ("pending", "done", "ignored"):
             item["status"] = req["status"]
             if req["status"] in ("done", "ignored"):
                 item["resolved_at"] = datetime.now().isoformat(timespec="seconds")
             else:
                 item.pop("resolved_at", None)
+            changed = True
+        if item and isinstance(req.get("starred"), bool):
+            item["starred"] = req["starred"]
+            changed = True
+        if changed:
             STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
             self._send(200, '{"ok": true}')
         else:

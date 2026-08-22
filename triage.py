@@ -118,6 +118,8 @@ def main():
     purged = 0
     for tid in list(items):
         it = items[tid]
+        if it.get("starred"):
+            continue  # starred = saved for later, never ages off
         if it["status"] in ("done", "ignored"):
             resolved = it.get("resolved_at")
             if not resolved:
